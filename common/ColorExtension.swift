@@ -99,33 +99,37 @@ import UIKit
 
 extension UIColor {
     
-    public convenience init?(hex: String) {
-        var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
-        hexSanitized = hexSanitized.replacingOccurrences(of: "#", with: "")
-        
-        var rgb: UInt64 = 0
-        var r: CGFloat = 0.0
-        var g: CGFloat = 0.0
-        var b: CGFloat = 0.0
-        var a: CGFloat = 1.0
-        
-        let length = hexSanitized.count
-        guard Scanner(string: hexSanitized).scanHexInt64(&rgb) else { return nil }
-        
-        if length == 6 {
-            r = CGFloat((rgb & 0xFF0000) >> 16) / 255.0
-            g = CGFloat((rgb & 0x00FF00) >> 8) / 255.0
-            b = CGFloat(rgb & 0x0000FF) / 255.0
-        } else if length == 8 {
-            r = CGFloat((rgb & 0xFF000000) >> 24) / 255.0
-            g = CGFloat((rgb & 0x00FF0000) >> 16) / 255.0
-            b = CGFloat((rgb & 0x0000FF00) >> 8) / 255.0
-            a = CGFloat(rgb & 0x000000FF) / 255.0
+    public convenience init(hex: String) {
+        var string = ""
+        let lowercaseHexString = hex.lowercased()
+        if lowercaseHexString.hasPrefix("0x") {
+            string = lowercaseHexString.replacingOccurrences(of: "0x", with: "")
+        } else if hex.hasPrefix("#") {
+            string = hex.replacingOccurrences(of: "#", with: "")
         } else {
-            return nil
+            string = hex
         }
+
+        if string.count == 3 {
+            var str = ""
+            string.forEach { str.append(String(repeating: String($0), count: 2)) }
+            string = str
+        }
+
+        guard let hexValue = UInt(string, radix: 16) else {
+            self.init(hex: 0xFFFFFF)
+            return
+        }
+
+        var trans = alpha
+        if trans < 0 { trans = 0 }
+        if trans > 1 { trans = 1 }
+
+        let red = (hexValue >> 16) & 0xFF
+        let green = (hexValue >> 8) & 0xFF
+        let blue = hexValue & 0xFF
         
-        self.init(red: r, green: g, blue: b, alpha: a)
+        self.init(red: red, green: green, blue: blue, transparency: trans)
     }
     
     /// Returns the hex string for this `UIColor`. For example: `#FFFFFF` or `#222222AB` if the alpha value is included.
