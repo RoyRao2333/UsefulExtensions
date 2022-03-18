@@ -15,4 +15,8 @@ extension Date {
         
         return formatter.string(from: self)
     }
+
+    func component(_ component: Calendar.Component) -> Int {
+        Calendar.current.component(component, from: self)
+    }
 }
