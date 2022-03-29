@@ -40,3 +40,38 @@ extension Publisher {
         scan((initialPreviousValue, initialPreviousValue)) { ($0.1, $1) }.eraseToAnyPublisher()
     }
 }
+
+
+extension Publisher where Self.Failure == Never {
+    
+    func assign2<Root1, Root2>(
+        to keyPath1: ReferenceWritableKeyPath<Root1, Output>, on object1: Root1,
+        and keyPath2: ReferenceWritableKeyPath<Root2, Output>, on object2: Root2
+    ) -> AnyCancellable {
+        sink { value in
+            object1[keyPath: keyPath1] = value
+            object2[keyPath: keyPath2] = value
+        }
+    }
+
+    func assign3<Root1, Root2, Root3>(
+        to keyPath1: ReferenceWritableKeyPath<Root1, Output>, on object1: Root1,
+        and keyPath2: ReferenceWritableKeyPath<Root2, Output>, on object2: Root2,
+        and keyPath3: ReferenceWritableKeyPath<Root3, Output>, on object3: Root3
+    ) -> AnyCancellable {
+        sink { value in
+            object1[keyPath: keyPath1] = value
+            object2[keyPath: keyPath2] = value
+            object3[keyPath: keyPath3] = value
+        }
+    }
+
+    /// assign object 为 AnyObject 使用 assignNoRetain 系统assign 会强引用object
+    func assignNoRetain<Root>(
+        to keyPath: ReferenceWritableKeyPath<Root, Self.Output>, on object: Root
+    ) -> AnyCancellable where Root: AnyObject {
+        sink { [weak object] value in
+            object?[keyPath: keyPath] = value
+        }
+    }
+}
