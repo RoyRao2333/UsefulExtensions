@@ -7,6 +7,7 @@
 
 import Foundation
 
+// MARK: String -
 extension String {
     
     func indexOfRepeatingCharacter(of character: Character, count: Int) -> String.Index? {
@@ -142,8 +143,25 @@ extension String {
     }
 }
 
+
+// MARK: Encodings -
 extension String.Encoding {
     static let GB_18030_2000 = String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.GB_18030_2000.rawValue)))
     
     static let GBK_95 = String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.GBK_95.rawValue)))
+}
+
+
+// MARK: StringProtocol -
+extension StringProtocol where Self: RangeReplaceableCollection {
+
+    mutating func insert<S: StringProtocol>(separator: S, every n: Int) {
+        for index in indices.every(n: n).dropFirst().reversed() {
+            insert(contentsOf: separator, at: index)
+        }
+    }
+
+    func inserting<S: StringProtocol>(separator: S, every n: Int) -> Self {
+        .init(unfoldSubSequences(limitedTo: n).joined(separator: separator))
+    }
 }
