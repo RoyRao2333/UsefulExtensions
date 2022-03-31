@@ -74,6 +74,15 @@ extension View {
             }
         }
     }
+
+    @ViewBuilder
+    func adaptedOverlay<Content: View>(alignment: Alignment = .center, @ViewBuilder content: () -> Content) -> some View {
+        if #available(iOS 15.0, *) {
+            self.overlay(alignment: alignment, content: content)
+        } else {
+            self.overlay(content(), alignment: alignment)
+        }
+    }
     
     /// Set if enable the scroll function in `List`s.
     func scrollEnabled(_ value: Bool) -> some View {
@@ -146,7 +155,10 @@ extension UIView {
     /// - Parameters:
     ///   - corners: 圆角的脚边
     ///   - cornerRadius: 大小
-    func addLayerCornerRadius(_ corners: CACornerMask = [.layerMinXMaxYCorner, .layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMaxXMaxYCorner], cornerRadius: CGFloat) {
+    func addLayerCornerRadius(
+        _ corners: CACornerMask = [.layerMinXMaxYCorner, .layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMaxXMaxYCorner], 
+        cornerRadius: CGFloat
+    ) {
         if self is UILabel {
             layer.masksToBounds = true
         }
