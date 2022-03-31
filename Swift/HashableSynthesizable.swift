@@ -4,7 +4,7 @@
 //  Created by roy on 2022/3/11.
 //
 
-import UIKit
+import Foundation
 
 /// A type whose `Hashable` conformance could be auto-synthesized
 public protocol HashableSynthesizable: Hashable { }
