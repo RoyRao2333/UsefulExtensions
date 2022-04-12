@@ -200,7 +200,10 @@ extension String {
 
     var markdown: AttributedString {
         do {
-            return try AttributedString(markdown: self) /// convert to AttributedString
+            return try AttributedString(
+                markdown: self,
+                options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)
+            )
         } catch {
             return AttributedString("Error parsing markdown: \(error)")
         }
