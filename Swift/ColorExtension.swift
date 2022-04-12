@@ -35,7 +35,6 @@ extension Color {
     }
 }
 
-
 // MARK: Cocoa -
 #if canImport(Cocoa)
 
@@ -90,7 +89,6 @@ extension NSColor {
 }
 
 #endif
-
 
 // MARK: UIKit -
 #if canImport(UIKit)

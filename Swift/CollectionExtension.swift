@@ -13,10 +13,8 @@ extension Collection {
     func unfoldSubSequences(limitedTo maxLength: Int) -> UnfoldSequence<SubSequence,Index> {
         sequence(state: startIndex) { start in
             guard start < endIndex else { return nil }
-            
             let end = index(start, offsetBy: maxLength, limitedBy: endIndex) ?? endIndex
             defer { start = end }
-            
             return self[start ..< end]
         }
     }
@@ -24,16 +22,13 @@ extension Collection {
     func every(n: Int) -> UnfoldSequence<Element,Index> {
         sequence(state: startIndex) { index in
             guard index < endIndex else { return nil }
-            
             defer { let _ = formIndex(&index, offsetBy: n, limitedBy: endIndex) }
-            
             return self[index]
         }
     }
 
     var pairs: [SubSequence] { .init(unfoldSubSequences(limitedTo: 2)) }
 }
-
 
 // MARK: Collection (Hashable) -
 extension Collection where Element: Hashable {
@@ -43,6 +38,28 @@ extension Collection where Element: Hashable {
     }
 }
 
+// MARK: BidirectionalCollection -
+extension BidirectionalCollection {
+    
+    subscript(safe offset: Int) -> Element? {
+        guard
+            !isEmpty,
+            let i = index(startIndex, offsetBy: offset, limitedBy: index(before: endIndex))
+        else { return nil }
+        
+        return self[i]
+    }
+
+    subscript(safe range: Range<Int>) -> SubSequence? {
+        guard
+            !isEmpty,
+            let startIndex = index(startIndex, offsetBy: range.lowerBound, limitedBy: endIndex),
+            let endIndex = index(startIndex, offsetBy: range.count, limitedBy: endIndex)
+        else { return nil }
+        
+        return self[startIndex..<endIndex]
+    }
+}
 
 // MARK: Array -
 public extension Array {
@@ -173,5 +190,19 @@ public extension Array where Element: Equatable {
     func withoutDuplicates<E: Hashable>(keyPath path: KeyPath<Element, E>) -> [Element] {
         var set = Set<E>()
         return filter { set.insert($0[keyPath: path]).inserted }
+    }
+}
+
+// MARK: StringProtocol: RangeReplaceableCollection -
+extension StringProtocol where Self: RangeReplaceableCollection {
+
+    mutating func insert<S: StringProtocol>(separator: S, every n: Int) {
+        for index in indices.every(n: n).dropFirst().reversed() {
+            insert(contentsOf: separator, at: index)
+        }
+    }
+
+    func inserting<S: StringProtocol>(separator: S, every n: Int) -> Self {
+        .init(unfoldSubSequences(limitedTo: n).joined(separator: separator))
     }
 }
