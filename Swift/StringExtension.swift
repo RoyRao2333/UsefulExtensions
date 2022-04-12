@@ -277,7 +277,7 @@ extension StringProtocol {
 // MARK: Subscripting -
 extension StringProtocol {
     
-    subscript(_ offset: Int) -> Element {
+    subscript(_ offset: Int) -> Element? {
         guard offset >= 0, offset < count else { return nil }
         return self[index(startIndex, offsetBy: offset)]
     }
