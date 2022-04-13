@@ -47,4 +47,8 @@ extension Date {
         
         return components.day ?? 0
     }
+
+    func byAdding(days offset: Int) -> Date {
+        Calendar.current.date(byAdding: .day, value: offset, to: self) ?? self
+    }
 }
