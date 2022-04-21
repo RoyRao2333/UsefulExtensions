@@ -7,7 +7,7 @@
 import SwiftUI
 import Combine
 
-// MARK: SwiftUI -
+// MARK: Common -
 extension View {
     
     /**
@@ -83,7 +83,16 @@ extension View {
             self.overlay(content(), alignment: alignment)
         }
     }
-    
+}
+
+
+// MARK: iOS -
+#if canImport(UIKit)
+
+import UIKit
+
+extension View {
+
     /// Set if enable the scroll function in `List`s.
     func scrollEnabled(_ value: Bool) -> some View {
         self.onAppear {
@@ -117,13 +126,22 @@ extension View {
     var screenRect: CGRect {
         UIScreen.main.bounds
     }
+
+    func snapshot() -> UIImage {
+        let controller = UIHostingController(rootView: self)
+        let view = controller.view
+
+        let targetSize = controller.view.intrinsicContentSize
+        view?.bounds = CGRect(origin: .zero, size: targetSize)
+        view?.backgroundColor = .clear
+
+        let renderer = UIGraphicsImageRenderer(size: targetSize)
+
+        return renderer.image { _ in
+            view?.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)
+        }
+    }
 }
-
-
-// MARK: UIKit -
-#if canImport(UIKit)
-
-import UIKit
 
 extension UIView {
     
@@ -140,10 +158,10 @@ extension UIView {
     /// Load the view from nib (xib) file.
     static func loadFromNib(bundle: Bundle? = nil) -> Self {
         let named = String(describing: Self.self)
-        guard 
+        guard
             let view = UINib(nibName: named, bundle: bundle)
                 .instantiate(withOwner: nil, options: nil)
-                .first as? Self 
+                .first as? Self
         else {
             fatalError("First element in xib file \(named) is not of type \(named)")
         }
@@ -156,7 +174,7 @@ extension UIView {
     ///   - corners: 圆角的脚边
     ///   - cornerRadius: 大小
     func addLayerCornerRadius(
-        _ corners: CACornerMask = [.layerMinXMaxYCorner, .layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMaxXMaxYCorner], 
+        _ corners: CACornerMask = [.layerMinXMaxYCorner, .layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMaxXMaxYCorner],
         cornerRadius: CGFloat
     ) {
         if self is UILabel {
@@ -186,11 +204,11 @@ extension UIView {
         shadowColor: UIColor = UIColor.black
     ) {
         addLayerShadowPath(
-            cornerRadius: cornerRadius, 
-            rect: bounds, 
+            cornerRadius: cornerRadius,
+            rect: bounds,
             shadowOffset: shadowOffset,
-            shadowOpacity: shadowOpacity, 
-            shadowRadius: shadowRadius, 
+            shadowOpacity: shadowOpacity,
+            shadowRadius: shadowRadius,
             shadowColor: shadowColor,
             path: nil
         )
