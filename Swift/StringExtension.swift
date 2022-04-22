@@ -208,6 +208,31 @@ extension String {
             return AttributedString("Error parsing markdown: \(error)")
         }
     }
+    
+    /// Find all matches of certain regex in string.
+    ///
+    /// First element of sub-array is the match.
+    func matches(_ regex: String) -> [[String]] {
+        let nsString = self as NSString
+        return (try? NSRegularExpression(pattern: regex))?
+            .matches(in: self, options: [], range: NSMakeRange(0, nsString.length))
+            .map { match in
+                (0 ..< match.numberOfRanges).map {
+                    match.range(at: $0).location == NSNotFound ? "" : nsString.substring(with: match.range(at: $0))
+                }
+            } ?? []
+    }
+    
+    /// Find all matched ranges of certain regex in string.
+    func ranges(regex pattern: String) -> [Range<String.Index>] {
+        let nsString = self as NSString
+        if let regex = try? NSRegularExpression(pattern: pattern) {
+            return regex.matches(in: self, range: NSMakeRange(0, nsString.length)).compactMap {
+                Range($0.range, in: self)
+            }
+        }
+        return []
+    }
 }
 
 
