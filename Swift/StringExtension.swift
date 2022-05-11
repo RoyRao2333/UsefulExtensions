@@ -198,6 +198,7 @@ extension String {
         addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
     }
 
+    @available(iOS 15, *)
     var markdown: AttributedString {
         do {
             return try AttributedString(
