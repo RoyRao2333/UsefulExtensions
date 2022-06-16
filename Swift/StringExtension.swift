@@ -120,6 +120,10 @@ extension String {
         return chineseCount
     }
     
+    var isBlank: Bool {
+        allSatisfy { $0.isWhitespace }
+    }
+    
     /// Percentage of Chinese characters in String.
     var chinesePercentage: Float {
         let chineseCount = self.chineseCharactersCount()
