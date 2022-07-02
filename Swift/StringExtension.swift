@@ -244,6 +244,17 @@ extension String {
         let size = self.size(withAttributes: fontAttributes)
         return size.width
     }
+    
+    /// eg. 2016-04-14T10:44:00+0000
+    var isoDate: Date? {
+        ISO8601DateFormatter().date(from: self)
+    }
+    
+    func date(format: String) -> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = format
+        return formatter.date(from: self)
+    }
 }
 
 
