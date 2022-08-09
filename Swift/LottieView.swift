@@ -44,10 +44,10 @@ struct LottieView: NSViewRepresentable {
         animationView.contentMode = contentMode
         animationView.loopMode = loopMode
         animationView.backgroundBehavior = backgroundBehavior
+        nsView.addSubview(animationView)
         if autoStart {
             play()
         }
-        nsView.addSubview(animationView)
     }
 
     func play() {
