@@ -12,11 +12,11 @@ import SwiftUI
 
 struct LottieView: NSViewRepresentable {
     var fileName: String
+    var contentMode: LottieContentMode
+    var loopMode: LottieLoopMode
+    var backgroundBehavior: LottieBackgroundBehavior
+    var autoStart: Bool
     let animationView: AnimationView
-    let contentMode: LottieContentMode
-    let loopMode: LottieLoopMode
-    let backgroundBehavior: LottieBackgroundBehavior
-    let autoStart: Bool
 
     init(
         fileName: String,
